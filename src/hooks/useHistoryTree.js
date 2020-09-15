@@ -67,10 +67,21 @@ export default function useHistoryTree(initialState) {
 
     useEffect(() => {
         if (current) {
-            console.log(current.value)
             setValue(current.value)
         }
     }, [current])
 
-    return [value, addValue, undo, redo, getCurrentForks]
+    function defaultKeyDownHandler(e) {
+        if ((e.metaKey || e.ctrlKey) && String.fromCharCode(e.which).toLowerCase() === 'z' && !e.shiftKey) {
+            e.preventDefault()
+            e.stopPropagation()
+            undo()
+        } else if ((e.metaKey || e.ctrlKey) && String.fromCharCode(e.which).toLowerCase() === 'z' && e.shiftKey) {
+            e.preventDefault()
+            e.stopPropagation()
+            redo()
+        }
+    }
+
+    return [value, addValue, undo, redo, getCurrentForks, defaultKeyDownHandler]
 }
