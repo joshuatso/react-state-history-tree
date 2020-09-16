@@ -7,8 +7,11 @@ class Node {
         this.parent = parent
         this.pathIndex = -1
     }
-    stringify() {
+    getValue() {
         return this.value
+    }
+    getChildrenValues() {
+        return this.children.map((child, index) => ({index, value: child.value}))
     }
     stripMethods() {
         return {value: this.value, children: this.children.map((child, index) => ({index, ...child.stripMethods()})), pathIndex: this.pathIndex}
@@ -40,28 +43,52 @@ export default function useHistoryTree(initialState) {
         }
     }
 
-    function undo() {
+    function undo(toClosestFork=false) {
+        const findClosestBackwardFork = node => {
+            if (node == root || node.children.length > 1) {
+                return node
+            } else {
+                findClosestBackwardFork(node.parent)
+            }
+        }
         if (current != root) {
-            setCurrent(current.parent)
+            toClosestFork ? setCurrent(findClosestBackwardFork(current.parent)) : setCurrent(current.parent)
         }
     }
 
-    function redo(pathIndex=null) {
-        if (current && current.pathIndex != -1) {
-            if (!pathIndex) {
-                setCurrent(current.children[current.pathIndex])
+    function redo(pathIndex=null, toClosestFork=false) {
+        const findClosestForwardFork = node => {
+            if (node.pathIndex == -1 || node.children.length > 1) {
+                return node
             } else {
+                findClosestForwardFork(node.children[node.pathIndex])
+            }
+        }
+        if (current && current.pathIndex != -1) {
+            if (!pathIndex && !toClosestFork) {
+                setCurrent(current.children[current.pathIndex])
+            } else if (!!pathIndex) {
                 current.pathIndex = pathIndex
                 setCurrent(current.children[pathIndex])
+            } else {
+                setCurrent(findClosestForwardFork(current.children[current.pathIndex]))
             }
         }
     }
 
-    function getCurrentForks() {
+    function getCurrentSubtree() {
         if (!current || current.children.length == 0) {
             return []
         } else {
             return current.stripMethods().children
+        }
+    }
+
+    function getCurrentBranches() {
+        if (!current || current.children.length == 0) {
+            return []
+        } else {
+            return current.getChildrenValues()
         }
     }
 
@@ -83,5 +110,5 @@ export default function useHistoryTree(initialState) {
         }
     }
 
-    return [value, addValue, undo, redo, getCurrentForks, defaultKeyDownHandler]
+    return [value, addValue, undo, redo, getCurrentBranches, defaultKeyDownHandler]
 }
