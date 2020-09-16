@@ -23,7 +23,7 @@ class Node {
     }
 }
 
-export default function useHistoryTree(initialState) {
+export default function useStateHistoryTree(initialState) {
     const [value, setValue] = useState(initialState)
 
     const [root, setRoot] = useState(new Node(initialState))
@@ -65,9 +65,9 @@ export default function useHistoryTree(initialState) {
             }
         }
         if (current && current.pathIndex != -1) {
-            if (!pathIndex && !toClosestFork) {
+            if (pathIndex == null && toClosestFork == null) {
                 setCurrent(current.children[current.pathIndex])
-            } else if (!!pathIndex) {
+            } else if (pathIndex != null) {
                 current.pathIndex = pathIndex
                 setCurrent(current.children[pathIndex])
             } else {

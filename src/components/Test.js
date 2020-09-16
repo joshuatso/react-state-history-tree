@@ -8,6 +8,7 @@ export default function Test() {
     const [value, setValue, undo, redo, getCurrentBranches, defaultKeyDownHandler] = useStateHistoryTree("")
     const [widgetOpen, setWidgetOpen] = useState(false)
     const [branches, setBranches] = useState([])
+    const inputElement = useRef(null)
 
     function keyDownHandler(e) {
         defaultKeyDownHandler(e)
@@ -22,8 +23,8 @@ export default function Test() {
     return (
         <div>
             <CSSBaseline/>
-            <TextField value={value} onChange={e => setValue(e.target.value)} onKeyDown={keyDownHandler}></TextField>
-            {widgetOpen && <RedoBranchesWidget branches={branches} redo={redo} open={widgetOpen} onClose={() => setWidgetOpen(false)}></RedoBranchesWidget>}
+            <input ref={inputElement} value={value} onChange={e => setValue(e.target.value)} onKeyDown={keyDownHandler}></input>
+            {widgetOpen && <RedoBranchesWidget anchorRef={inputElement} branches={branches} redo={redo} open={widgetOpen} onClose={() => setWidgetOpen(false)}></RedoBranchesWidget>}
         </div>
     )
 }

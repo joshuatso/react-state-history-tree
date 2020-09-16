@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
 
-export default function RedoBranchesWidget({branches, redo, open=true, onClose}) {
+export default function RedoBranchesWidget({anchorRef, branches, redo, open=true, onClose}) {
     const element = useRef(null)
     const [widgetOpen, setWidgetOpen] = useState(open)
     const [selectedBranchIndex, setSelectedBranchIndex] = useState(null)
@@ -63,6 +63,7 @@ export default function RedoBranchesWidget({branches, redo, open=true, onClose})
                         {branch}
                         <div style={{display: "flex", flexDirection: "row", justifyContent: "flex-end"}}>
                             <button onClick={() => {
+                                console.log(index)
                                 redo(index)
                                 closeWidget()
                             }}>
