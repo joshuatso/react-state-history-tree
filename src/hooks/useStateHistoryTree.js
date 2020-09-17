@@ -28,19 +28,11 @@ export default function useStateHistoryTree(initialState) {
 
     const [root, setRoot] = useState(new Node(initialState))
     const [current, setCurrent] = useState(root)
-    const [initialized, setInitialized] = useState(!!root)
 
     function addValue(newValue) {
-        if (!initialized) {
-            const newNode = new Node(newValue)
-            setRoot(newNode)
-            setCurrent(newNode)
-            setInitialized(true)
-        } else {
-            const newNode = new Node(newValue)
-            current.addChild(newNode)
-            setCurrent(newNode)
-        }
+        const newNode = new Node(newValue)
+        current.addChild(newNode)
+        setCurrent(newNode)
     }
 
     function undo(toClosestFork=false) {
@@ -52,7 +44,7 @@ export default function useStateHistoryTree(initialState) {
             }
         }
         if (current != root) {
-            toClosestFork ? setCurrent(findClosestBackwardFork(current.parent)) : setCurrent(current.parent)
+            toClosestFork === true ? setCurrent(findClosestBackwardFork(current.parent)) : setCurrent(current.parent)
         }
     }
 
@@ -64,10 +56,10 @@ export default function useStateHistoryTree(initialState) {
                 findClosestForwardFork(node.children[node.pathIndex])
             }
         }
-        if (current && current.pathIndex != -1) {
-            if (pathIndex == null && toClosestFork == null) {
+        if (current != null && current.pathIndex != -1) {
+            if (pathIndex === null && toClosestFork === false) {
                 setCurrent(current.children[current.pathIndex])
-            } else if (pathIndex != null) {
+            } else if (pathIndex !== null) {
                 current.pathIndex = pathIndex
                 setCurrent(current.children[pathIndex])
             } else {
