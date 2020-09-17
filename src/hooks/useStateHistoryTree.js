@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
+// represents one state in tree
 class Node {
     constructor(value = null, parent = null) {
         this.value = value
@@ -24,10 +25,14 @@ class Node {
 }
 
 export default function useStateHistoryTree(initialState) {
+    // current value
     const [value, setValue] = useState(initialState)
 
     const [root, setRoot] = useState(new Node(initialState))
+    
+    // current node
     const [current, setCurrent] = useState(root)
+
     const [atRoot, setAtRoot] = useState(true)
     const [atLeaf, setAtLeaf] = useState(true)
 
@@ -108,6 +113,7 @@ export default function useStateHistoryTree(initialState) {
     }, [current])
 
     function defaultKeyDownHandler(e) {
+        // ctrl + z and ctrl + shift + z
         if ((e.metaKey || e.ctrlKey) && String.fromCharCode(e.which).toLowerCase() === 'z' && !e.shiftKey) {
             e.preventDefault()
             e.stopPropagation()
@@ -119,5 +125,5 @@ export default function useStateHistoryTree(initialState) {
         }
     }
 
-    return [value, addValue, {undo, redo, getCurrentBranches, defaultKeyDownHandler, atRoot, atLeaf}]
+    return [value, addValue, {undo, redo, getCurrentBranches, getCurrentSubtree, defaultKeyDownHandler, atRoot, atLeaf}]
 }

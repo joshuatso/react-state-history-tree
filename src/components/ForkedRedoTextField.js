@@ -1,7 +1,10 @@
 import React, {useEffect, useLayoutEffect, useRef, useState, useCallback} from 'react'
 import useStateHistoryTree from "../hooks/useStateHistoryTree"
+import DoButton from "./DoButton"
+import RedoCell from "./RedoCell"
+import '../App.css'
 
-export default function ForkedRedoTextField({multiline}) {
+export default function ForkedRedoTextField({multiline=false, inputStyles, unselectedCellStyles={}, selectedCellStyles={}, cellAreaStyles={}, doButtonStyles={}, widgetContainerStyles={}}) {
     const [treeValue, setTreeValue, {undo, redo, getCurrentBranches, defaultKeyDownHandler, atRoot, atLeaf}] = useStateHistoryTree("")
     const widgetRef = useRef(null)
     const inputRef = useRef(null)
@@ -11,9 +14,12 @@ export default function ForkedRedoTextField({multiline}) {
     const [dummyOpen, setDummyOpen] = useState(false)
     const [branches, setBranches] = useState([])
     const [selectedBranchIndex, setSelectedBranchIndex] = useState(null)
-    const [inputStyles, setInputStyles] = useState({})
+
+    // used for determining styling and position of dummy, which is used for placing widget in caret position
+    const [completeInputStyles, setCompleteInputStyles] = useState({})
     const [coordinates, setCoordinates] = useState(null)
 
+    // adding forked redo functionality to default handler
     function keyDownHandler(e) {
         defaultKeyDownHandler(e)
         if ((e.metaKey || e.ctrlKey) && String.fromCharCode(e.which).toLowerCase() === 'y' && !e.shiftKey) {
@@ -31,6 +37,7 @@ export default function ForkedRedoTextField({multiline}) {
         setWidgetOpen(false)
     }
 
+    // closes widget on click away
     useEffect(() => {
         const clickHandler = e => {
             if (!widgetRef.current.contains(e.target)) {
@@ -45,27 +52,32 @@ export default function ForkedRedoTextField({multiline}) {
         }
     }, [widgetRef])
 
+    // reset selected branch on widget close
     useEffect(() => {
         if (!widgetOpen) {
             setSelectedBranchIndex(null)
         }
     }, [widgetOpen])
 
+    // convert CSSStyleDeclaration to jsx style object
     useEffect(() => {
         if (inputRef.current) {
             let styles = {...window.getComputedStyle(inputRef.current)}
+            // filter out all indexed properties
             for (var i=0; i < 316; i++) {
                 delete styles[i]
             }
+            // capitalize all properties starting with webkit
             let webkitStyleEntries = Object.entries(styles).filter(([key, value]) => key.match(/webkit/))
             for (const [key, value] of webkitStyleEntries) {
                 delete styles[key]
             }
             const upperWebkitStyleEntries = webkitStyleEntries.map(([key, value]) => [`W${key.slice(1)}`,value])
-            setInputStyles({...styles, ...Object.fromEntries(upperWebkitStyleEntries)})
+            setCompleteInputStyles({...styles, ...Object.fromEntries(upperWebkitStyleEntries)})
         }
-    }, [inputRef])
+    }, [inputRef, inputStyles])
 
+    // relay coordinates of dummy to widget
     useLayoutEffect(() => {
         if (dummyRef.current) {
             const top = dummyRef.current.offsetTop + dummyRef.current.offsetHeight > inputRef.current.offsetHeight ? inputRef.current.offsetHeight : dummyRef.current.offsetTop + dummyRef.current.offsetHeight
@@ -74,6 +86,7 @@ export default function ForkedRedoTextField({multiline}) {
         }
     }, [dummyRef, dummyOpen])
 
+    // change orientation of widget based on window size
     const resizeHandler = useCallback(() => {
         if (widgetRef.current && containerRef.current && coordinates) {
             const containerOffset = containerRef.current.getBoundingClientRect()
@@ -100,112 +113,92 @@ export default function ForkedRedoTextField({multiline}) {
         <>
         <div style={{position: "relative"}} ref={containerRef}>
             {multiline ? 
-                <textarea style={{resize: "none"}} rows={5} ref={inputRef} value={treeValue} onChange={e => setTreeValue(e.target.value)} onKeyDown={keyDownHandler}/>
+                <textarea 
+                    ref={inputRef} 
+                    style={inputStyles ? {resize: "none", ...inputStyles} : {resize: "none"}} 
+                    rows={5} 
+                    value={treeValue} 
+                    onChange={e => setTreeValue(e.target.value)} 
+                    onKeyDown={keyDownHandler}
+                />
                 :
-                <input ref={inputRef} value={treeValue} onChange={e => setTreeValue(e.target.value)} onKeyDown={keyDownHandler}/>
+                <input 
+                    ref={inputRef}
+                    style={inputStyles} 
+                    value={treeValue} 
+                    onChange={e => setTreeValue(e.target.value)} 
+                    onKeyDown={keyDownHandler}
+                />
             }
-            {dummyOpen ? <div style={{...inputStyles, position: "absolute", top: 0, left: 0, zIndex: -100, overflow: "auto"}}>
-                {treeValue}
-                <span ref={dummyRef}></span>
-            </div> : null
+            {dummyOpen ? 
+                <div style={{...completeInputStyles, position: "absolute", top: 0, left: 0, zIndex: -100, overflow: "auto"}}>
+                    {treeValue}
+                    <span ref={dummyRef}></span>
+                </div> 
+                : 
+                null
             }
-            <div ref={widgetRef} style={{
-            ...coordinates,
-            boxSizing: "border-box",
-            position: "absolute",
-            border: "0.5px solid LightGrey",
-            borderRadius: "3px",
-            zIndex: 100,
-            display: widgetOpen && !(atRoot && atLeaf) ? "flex" : "none",
-            flexDirection: "row"
-            }}>
-                <button onClick={() => {
-                    undo(true)
-                    inputRef.current.focus()
-                    closeWidget()
-                }}
-                disabled={atRoot}
+            <div 
+                ref={widgetRef} 
                 style={{
-                    border: "none",
-                    paddingLeft: 0
-                }}>&#12296;</button>
-                <div style={{
-                boxSizing: "border-box",
-                display: "inline-flex", 
-                flexDirection: "row",
-                flexWrap: "wrap",
-                maxWidth: "326px",
-                maxHeight: "326px",
-                overflowY: "auto",
-                backgroundColor: "white"
-                }}>
-                {branches.map((branch, index) =>
-                    <div key={`${index}branch`} onClick={e => setSelectedBranchIndex(index)} style={{
-                        maxWidth: "calc(100% - 4px)",
-                        margin: "2px",
-                        borderRadius: "2px",
-                        cursor: "default"
-                    }}>
-                        <button style={{
-                                    all: "unset",
-                                    boxSizing: "border-box",
-                                    display: index == selectedBranchIndex ? "block" : "none",
-                                    backgroundColor: "#00000000",
-                                    border: "none",
-                                    color: "white",
-                                    cursor: "pointer",
-                                    textDecoration: "none",
-                                    padding: 0,
-                                    margin: 0
-                                }}
-                                    onClick={() => {
-                                    redo(index)
-                                    inputRef.current.focus()
-                                    closeWidget()
-                                }}>
-                            <div style={{
-                                maxWidth:"320px",
-                                maxHeight: "320px",
-                                padding: "3px",
-                                overflowWrap: "break-word",
-                                wordWrap: "break-word",
-                                hyphens: "auto",
-                                borderRadius: "2px",
-                                backgroundColor: "#005ce6",
-                                color: "white",
-                            }}>
-                                <span style={{marginRight: "2px", fontSize: "10px"}}>{index+1}</span>
-                                {branch}
-                            </div>
-                        </button>
-                        <div style={{
-                            maxWidth: "50px",
-                            padding: "3px",
-                            display: index == selectedBranchIndex ? "none" : "flex",
-                            flexDirection: "row",
-                            alignItems: "baseline",
-                        }}
-                        >
-                            <span style={{marginRight: "2px", fontSize: "10px", color: "grey"}}>{index+1}</span>
-                            <span style={{
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis"
-                            }}>{branch}</span>
-                        </div>
-                    </div>
-                )}
+                    ...coordinates,
+                    boxSizing: "border-box",
+                    position: "absolute",
+                    border: "0.5px solid LightGrey",
+                    borderRadius: "3px",
+                    zIndex: 100,
+                    display: widgetOpen && !(atRoot && atLeaf) ? "flex" : "none",
+                    flexDirection: "row",
+                    ...widgetContainerStyles
+                }}
+            >
+                <DoButton type={"left"} 
+                    doButtonStyles={doButtonStyles} 
+                    disabled={atRoot} 
+                    onClick={() => {
+                        undo(true)
+                        inputRef.current.focus()
+                        closeWidget()
+                    }}
+                />
+                <div 
+                    style={{
+                        boxSizing: "border-box",
+                        display: "inline-flex", 
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        maxWidth: "326px",
+                        maxHeight: "326px",
+                        overflowY: "auto",
+                        backgroundColor: "white",
+                        ...cellAreaStyles
+                    }}
+                >
+                    {branches.map((branch, index) =>
+                        <RedoCell value={branch}
+                            key={`${index}RedoCell`} 
+                            index={index}
+                            selectedCellStyles={selectedCellStyles} 
+                            unselectedCellStyles={unselectedCellStyles} 
+                            onClick={e => setSelectedBranchIndex(index)}
+                            onSubmit={() => {
+                                redo(index)
+                                inputRef.current.focus()
+                                closeWidget()
+                            }}
+                            selected={index == selectedBranchIndex}
+                        ></RedoCell>
+                    )}
                 </div>
-                <button onClick={() => {
-                    redo(null, true)
-                    inputRef.current.focus()
-                    closeWidget()
-                }}
-                disabled={atLeaf}
-                style={{
-                    border: "none",
-                    paddingRight: 0
-                }}>&#12297;</button>
+                <DoButton type={"right"} 
+                    doButtonStyles={doButtonStyles} 
+                    disabled={atLeaf} 
+                    onClick={() => {
+                        redo(null, true)
+                        inputRef.current.focus()
+                        closeWidget()
+                    }}
+                />
             </div>
         </div>
         </>
