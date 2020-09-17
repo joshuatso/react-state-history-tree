@@ -1,6 +1,6 @@
 import React, {useEffect, useLayoutEffect, useRef, useState, useCallback} from 'react'
 import useStateHistoryTree from "../hooks/useStateHistoryTree"
-import DoButton from "./DoButton"
+import DoButton from "./DoButton.js"
 import RedoCell from "./RedoCell"
 import '../App.css'
 
@@ -19,15 +19,34 @@ export default function ForkedRedoTextField({multiline=false, inputStyles, unsel
     const [completeInputStyles, setCompleteInputStyles] = useState({})
     const [coordinates, setCoordinates] = useState(null)
 
-    // adding forked redo functionality to default handler
+    // adding forked redo and widget navigation functionality to default handler
     function keyDownHandler(e) {
         defaultKeyDownHandler(e)
-        if ((e.metaKey || e.ctrlKey) && String.fromCharCode(e.which).toLowerCase() === 'y' && !e.shiftKey) {
+        // open widget
+        if ((e.metaKey || e.ctrlKey) && e.key === 'y' && !e.shiftKey) {
             e.preventDefault()
             e.stopPropagation()
             setBranches(getCurrentBranches().map(branch => branch.value))
             setWidgetOpen(true)
             setDummyOpen(true)
+        } else if (widgetOpen && (e.key === 'Left' || e.key === "ArrowLeft")) {
+            e.preventDefault()
+            e.stopPropagation()
+            // start from right if selected does not exist yet
+            if (!selectedBranchIndex) {
+                setSelectedBranchIndex(branches.length - 1)
+            } else {
+                setSelectedBranchIndex(prevIndex => (prevIndex-1)%(branches.length))
+            }
+        } else if (widgetOpen && (e.key === 'Right' || e.key === "ArrowRight")) {
+            e.preventDefault()
+            e.stopPropagation()
+            // start from left if selected does not exist yet
+            if (selectedBranchIndex === null) {
+                setSelectedBranchIndex(0)
+            } else  {
+                setSelectedBranchIndex(prevIndex => (prevIndex+1)%(branches.length))
+            }
         } else {
             setWidgetOpen(false)
         }

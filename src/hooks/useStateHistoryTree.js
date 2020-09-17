@@ -1,28 +1,5 @@
 import React, {useState, useEffect} from 'react'
-
-// represents one state in tree
-class Node {
-    constructor(value = null, parent = null) {
-        this.value = value
-        this.children = []
-        this.parent = parent
-        this.pathIndex = -1
-    }
-    getValue() {
-        return this.value
-    }
-    getChildrenValues() {
-        return this.children.map((child, index) => ({index, value: child.value}))
-    }
-    stripMethods() {
-        return {value: this.value, children: this.children.map((child, index) => ({index, ...child.stripMethods()})), pathIndex: this.pathIndex}
-    }
-    addChild(child) {
-        child.parent = this
-        this.children.push(child)
-        this.pathIndex = this.children.length - 1
-    }
-}
+import Node from "../classes/Node"
 
 export default function useStateHistoryTree(initialState) {
     // current value
@@ -43,7 +20,7 @@ export default function useStateHistoryTree(initialState) {
     }
 
     function undo(toClosestFork=false) {
-        const findClosestBackwardFork = node => {
+        const findClosestBackwardFork = (node) => {
             if (node == root || node.children.length > 1) {
                 return node
             } else {
@@ -61,7 +38,7 @@ export default function useStateHistoryTree(initialState) {
     }
 
     function redo(pathIndex=null, toClosestFork=false) {
-        const findClosestForwardFork = node => {
+        const findClosestForwardFork = (node) => {
             if (node.pathIndex == -1 || node.children.length > 1) {
                 return node
             } else {
@@ -114,11 +91,11 @@ export default function useStateHistoryTree(initialState) {
 
     function defaultKeyDownHandler(e) {
         // ctrl + z and ctrl + shift + z
-        if ((e.metaKey || e.ctrlKey) && String.fromCharCode(e.which).toLowerCase() === 'z' && !e.shiftKey) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
             e.preventDefault()
             e.stopPropagation()
             undo()
-        } else if ((e.metaKey || e.ctrlKey) && String.fromCharCode(e.which).toLowerCase() === 'z' && e.shiftKey) {
+        } else if ((e.metaKey || e.ctrlKey) && e.key === 'z' && e.shiftKey) {
             e.preventDefault()
             e.stopPropagation()
             redo()
