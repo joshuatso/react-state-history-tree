@@ -28,6 +28,8 @@ export default function useStateHistoryTree(initialState) {
 
     const [root, setRoot] = useState(new Node(initialState))
     const [current, setCurrent] = useState(root)
+    const [atRoot, setAtRoot] = useState(true)
+    const [atLeaf, setAtLeaf] = useState(true)
 
     function addValue(newValue) {
         const newNode = new Node(newValue)
@@ -40,11 +42,16 @@ export default function useStateHistoryTree(initialState) {
             if (node == root || node.children.length > 1) {
                 return node
             } else {
-                findClosestBackwardFork(node.parent)
+                return findClosestBackwardFork(node.parent)
             }
         }
         if (current != root) {
-            toClosestFork === true ? setCurrent(findClosestBackwardFork(current.parent)) : setCurrent(current.parent)
+            if (toClosestFork) {
+                const node = findClosestBackwardFork(current.parent)
+                setCurrent(node)
+            } else {
+                setCurrent(current.parent)
+            }
         }
     }
 
@@ -53,13 +60,13 @@ export default function useStateHistoryTree(initialState) {
             if (node.pathIndex == -1 || node.children.length > 1) {
                 return node
             } else {
-                findClosestForwardFork(node.children[node.pathIndex])
+                return findClosestForwardFork(node.children[node.pathIndex])
             }
         }
         if (current != null && current.pathIndex != -1) {
             if (pathIndex === null && toClosestFork === false) {
                 setCurrent(current.children[current.pathIndex])
-            } else if (pathIndex !== null) {
+            } else if (pathIndex !== null && pathIndex !== undefined) {
                 current.pathIndex = pathIndex
                 setCurrent(current.children[pathIndex])
             } else {
@@ -86,6 +93,16 @@ export default function useStateHistoryTree(initialState) {
 
     useEffect(() => {
         if (current) {
+            if (current == root) {
+                setAtRoot(true)
+            } else {
+                setAtRoot(false)
+            }
+            if (current.children.length == 0) {
+                setAtLeaf(true)
+            } else {
+                setAtLeaf(false)
+            }
             setValue(current.value)
         }
     }, [current])
@@ -102,5 +119,5 @@ export default function useStateHistoryTree(initialState) {
         }
     }
 
-    return [value, addValue, undo, redo, getCurrentBranches, defaultKeyDownHandler]
+    return [value, addValue, {undo, redo, getCurrentBranches, defaultKeyDownHandler, atRoot, atLeaf}]
 }
