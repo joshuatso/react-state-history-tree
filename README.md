@@ -40,7 +40,7 @@ import { useStateHistoryTree, ForkedRedoTextField } from "react-state-history-tr
 
 ### useStateHistoryTree
 
-useStateHistoryTree can be used as follows:
+The useStateHistoryTree hook can be used as follows:
 
 ```js
 const [state, setState, utilities] = useStateHistoryTree(initialState)
