@@ -31,8 +31,7 @@ yarn add react-state-history-tree
 React must be installed separately, as it is not included in the dependencies. The hook and component can be imported as follows:
 
 ```js
-import { useStateHistoryTree } from "react-state-history-tree";
-import ForkedRedoTextField from "react-state-history-tree/ForkedRedoTextField";
+import { useStateHistoryTree, ForkedRedoTextField } from "react-state-history-tree";
 ```
 
 ## Documentation
@@ -97,8 +96,7 @@ Below is an example of using the useStateHistoryTree hook on a non-text state an
 
 ```js
 import React, { useState } from "react";
-import { useStateHistoryTree } from "react-state-history-tree";
-import ForkedRedoTextField from "react-state-history-tree/ForkedRedoTextField";
+import { useStateHistoryTree, ForkedRedoTextField } from "react-state-history-tree";
 
 export default function Test() {
     const [color, setColor, 
