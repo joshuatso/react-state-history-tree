@@ -84,7 +84,7 @@ Props for ForkedRedoTextField:
 #### Navigating the ForkedRedoTextField widget
 
 The widget/popup can be used to select the desired redo branch to set as the state:
-* <kbd>Ctrl</kbd> + <kbd>y</kbd> (<kbd>command</kbd> + <kbd>y</kbd> Mac users) opens the widget.
+* <kbd>Ctrl</kbd> + <kbd>y</kbd> (<kbd>command</kbd> + <kbd>y</kbd> for Mac users) opens the widget.
 * Clicking the corresponding cell will expand the cell if needed to see the entire value. 
 * Clicking on a selected cell submits the selection. 
 * The <kbd>Left</kbd> and <kbd>Right</kbd> keyboard arrows can be used to cycle through the cells.
