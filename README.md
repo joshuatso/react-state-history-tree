@@ -70,13 +70,13 @@ Utilities is an object that has the following fields:
 
 | Field | Type | Description |
 | ----------- | ----------- | ----------- |
-| undo | `(toClosestFork: boolean) => void` | If `toClosestFork` is set as `false`, the state is set to the previous state. If `toClosestFork` is set as `true`, the state is set to the closest state in the past that had more than one redo branch. `toClosestFork` defaults to `false`.
-| redo | `(pathIndex: number, toClosestFork: boolean) => void` | If `pathIndex` is set to a valid index of the current redo branches, the state is set to the redo state with that index. If `toClosestFork` is set as `false`, the state is set to the previous state. If `toClosestFork` is set as `true`, the state is set to the closest state in the past that had more than one redo branch. `toClosestFork` defaults to `false`.
-| getCurrentBranches | `() => [branch: {index: number, value}]` | Returns the redo branches of the current state.
-| getCurrentSubtree | `() => [node: {index: number, value, children: [node]}]` | Returns the same redo branches as `getCurrentBranches`, but includes nested children for deeper navigation.
-| defaultKeyDownHandler | `(keydown event) => void` | This callback implements the default behavior for undo/redo: <kbd>Ctrl</kbd> + <kbd>z</kbd> for undo and <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>z</kbd> for redo (<kbd>command</kbd> instead of <kbd>Ctrl</kbd> is used for Mac users).
-| atRoot | boolean | `true` if current state is the initial state, `false` otherwise.
-| atLeaf | boolean | `true` if current state has no redo branches, `false` otherwise.
+| undo | `(toClosestFork: boolean) => void` | If `toClosestFork` is set as `false`, the state is set to the previous state. If `toClosestFork` is set as `true`, the state is set to the closest state in the past that had more than one redo branch. `toClosestFork` defaults to `false`. |
+| redo | `(pathIndex: number, toClosestFork: boolean) => void` | If `pathIndex` is set to a valid index of the current redo branches, the state is set to the redo state with that index. If `toClosestFork` is set as `false`, the state is set to the previous state. If `toClosestFork` is set as `true`, the state is set to the closest state in the past that had more than one redo branch. `toClosestFork` defaults to `false`. |
+| getCurrentBranches | `() => [branch: {index: number, value}]` | Returns the redo branches of the current state. |
+| getCurrentSubtree | `() => [node: {index: number, value, children: [node]}]` | Returns the same redo branches as `getCurrentBranches`, but includes nested children for deeper navigation. |
+| defaultKeyDownHandler | `(keydown event) => void` | This callback implements the default behavior for undo/redo: <kbd>Ctrl</kbd> + <kbd>z</kbd> for undo and <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>z</kbd> for redo (<kbd>command</kbd> instead of <kbd>Ctrl</kbd> is used for Mac users). |
+| atRoot | boolean | `true` if current state is the initial state, `false` otherwise.|
+| atLeaf | boolean | `true` if current state has no redo branches, `false` otherwise.|
 
 ### ForkedRedoTextField
 
@@ -85,14 +85,15 @@ ForkedRedoTextField is a React component that applies the useStateHistoryTree ho
 Props for ForkedRedoTextField:
 
 | Prop | Type | Default | Description |
-| multiline | boolean | false | Uses `<textarea/>` if `true`, `<input/>` otherwise.
-| rows | number | 3 | The number of rows if multiline.
-| inputStyles | jsx style object | N/A | Styles applied to the input element.
-| unSelectedCellStyles | jsx style object | N/A | Styles applied to the unselected widget cells.
-| selectedCellStyles | jsx style object | N/A | Styles applied to the selected widget cell.
-| cellAreaStyles | jsx style object | N/A | Styles applied to the cell area in the widget.
-| doButtonStyles | jsx style object | N/A | Styles applied to the undo/redo to closest fork buttons in the widget.
-| widgetContainerStyles | jsx style object | N/A | Styles applied to the widget container.
+| ----------- | ----------- | ----------- | ----------- |
+| multiline | boolean | false | Uses `<textarea/>` if `true`, `<input/>` otherwise. |
+| rows | number | 3 | The number of rows if multiline. |
+| inputStyles | jsx style object | N/A | Styles applied to the input element. |
+| unSelectedCellStyles | jsx style object | N/A | Styles applied to the unselected widget cells. |
+| selectedCellStyles | jsx style object | N/A | Styles applied to the selected widget cell. |
+| cellAreaStyles | jsx style object | N/A | Styles applied to the cell area in the widget. |
+| doButtonStyles | jsx style object | N/A | Styles applied to the undo/redo to closest fork buttons in the widget. |
+| widgetContainerStyles | jsx style object | N/A | Styles applied to the widget container. |
 
 #### Navigating the ForkedRedoTextField widget
 

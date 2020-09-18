@@ -135,7 +135,6 @@ export default function ForkedRedoTextField({multiline=false, rows=3, inputStyle
     })
 
     return (
-        <>
         <div style={{position: "relative"}} ref={containerRef}>
             {multiline ? 
                 <textarea 
@@ -226,6 +225,5 @@ export default function ForkedRedoTextField({multiline=false, rows=3, inputStyle
                 />
             </div>
         </div>
-        </>
     )
 }

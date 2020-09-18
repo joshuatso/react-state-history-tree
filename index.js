@@ -1,4 +1,4 @@
-import ForkedRedoTextField from "./src/components/ForkedRedoTextField"
-import useStateHistoryTree from "./src/hooks/useStateHistoryTree"
+import ForkedRedoTextField from "./dist/components/ForkedRedoTextField"
+import useStateHistoryTree from "./dist/hooks/useStateHistoryTree"
 
 export {ForkedRedoTextField, useStateHistoryTree}

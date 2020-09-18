@@ -1,0 +1,16 @@
+* {
+    box-sizing: border-box;
+}
+.doButton {
+    border: none;
+    min-height: 30px;
+}
+.doButtonRight {
+    padding-right: 0;
+}
+.doButtonLeft {
+    padding-left: 0;
+}
+.doButton:disabled {
+    background-color: white;
+}
