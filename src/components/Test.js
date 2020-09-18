@@ -3,10 +3,27 @@ import useStateHistoryTree from "../hooks/useStateHistoryTree"
 import ForkedRedoTextField from "./ForkedRedoTextField"
 
 export default function Test() {
-
+    const [color, setColor, 
+              {
+                  undo, 
+                  redo, 
+                  getCurrentBranches, 
+                  getCurrentSubtree, 
+                  defaultKeyDownHandler, 
+                  atRoot, 
+                  atLeaf
+              }
+          ] = useStateHistoryTree("blue")
+          
     return (
-        <div>
-            <ForkedRedoTextField multiline></ForkedRedoTextField>
-        </div>
-    )
-}
+        <>
+      <div onKeyDown={defaultKeyDownHandler} tabindex="0">
+          <div style={{backgroundColor: color}}>{color}</div>
+          <button onClick={() => setColor(prevColor => "blue")}>blue</button>
+          <button onClick={() => setColor("red")}>red</button>
+          <button onClick={() => setColor("green")}>green</button>
+      </div>
+      <ForkedRedoTextField multiline></ForkedRedoTextField>
+      </>
+    );
+  };

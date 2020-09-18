@@ -28,30 +28,11 @@ Or via [yarn](https://github.com/yarnpkg/yarn):
 yarn add react-state-history-tree
 ```
 
-React must be installed separately, as it is not included in the dependencies.
+React must be installed separately, as it is not included in the dependencies. The hook and component can be imported as follows:
 
 ```js
-import React, { useState } from "react";
 import { useStateHistoryTree } from "react-state-history-tree";
-import ForkedRedoTextField from "react-state-history-tree/ForkedRedoTextField"
-
-const Test = () => {
-  const [value, setValue, 
-            {
-                undo, 
-                redo, 
-                getCurrentBranches, 
-                getCurrentSubtree, 
-                defaultKeyDownHandler, 
-                atRoot, 
-                atLeaf
-            }
-        ] = useStateHistoryTree("")
-  return (
-    <input value={value} onChange={e => setValue(e.target.value)}/>
-    <ForkedRedoTextField multiline></ForkedRedoTextField>
-  );
-};
+import ForkedRedoTextField from "react-state-history-tree/ForkedRedoTextField";
 ```
 
 ## Documentation
@@ -60,7 +41,7 @@ const Test = () => {
 
 useStateHistoryTree can be used as follows:
 
-```
+```js
 const [state, setState, utilities] = useStateHistoryTree(initialState)
 ```
 
@@ -74,7 +55,7 @@ Utilities is an object that has the following fields:
 | redo | `(pathIndex: number, toClosestFork: boolean) => void` | If `pathIndex` is set to a valid index of the current redo branches, the state is set to the redo state with that index. If `toClosestFork` is set as `false`, the state is set to the previous state. If `toClosestFork` is set as `true`, the state is set to the closest state in the past that had more than one redo branch. `toClosestFork` defaults to `false`. |
 | getCurrentBranches | `() => [branch: {index: number, value}]` | Returns the redo branches of the current state. |
 | getCurrentSubtree | `() => [node: {index: number, value, children: [node]}]` | Returns the same redo branches as `getCurrentBranches`, but includes nested children for deeper navigation. |
-| defaultKeyDownHandler | `(keydown event) => void` | This callback implements the default behavior for undo/redo: <kbd>Ctrl</kbd> + <kbd>z</kbd> for undo and <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>z</kbd> for redo (<kbd>command</kbd> instead of <kbd>Ctrl</kbd> is used for Mac users). |
+| defaultKeyDownHandler | `(keydown event) => void` | This callback implements the default behavior for undo/redo: <kbd>Ctrl</kbd> + <kbd>z</kbd> for undo and <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>z</kbd> for redo (<kbd>command</kbd> instead of <kbd>Ctrl</kbd> is used for Mac users). **IMPORTANT NOTE:** When defaultKeyDownHandler is applied to certain tags (including div), the `tabindex` attribute must be set to `"0"` for the handler to work properly.|
 | atRoot | boolean | `true` if current state is the initial state, `false` otherwise.|
 | atLeaf | boolean | `true` if current state has no redo branches, `false` otherwise.|
 
@@ -109,3 +90,39 @@ The widget/popup can be used to select the desired redo branch to set as the sta
 ### React
 
 This package uses hooks, so React 16.8 or newer is required.
+
+## Example
+
+Below is an example of using the useStateHistoryTree hook on a non-text state and applying the defaultKeyDownHandler to a container div (note `tabindex = "0"`) to control the background color. Also note that passing a function to `setColor` is also supported, just as in React's useState hook. Use of a ForkedRedoTextField component is also demonstrated.
+
+```js
+import React, { useState } from "react";
+import { useStateHistoryTree } from "react-state-history-tree";
+import ForkedRedoTextField from "react-state-history-tree/ForkedRedoTextField";
+
+export default function Test() {
+    const [color, setColor, 
+            {
+                undo, 
+                redo, 
+                getCurrentBranches, 
+                getCurrentSubtree, 
+                defaultKeyDownHandler, 
+                atRoot, 
+                atLeaf
+            }
+        ] = useStateHistoryTree("blue")
+    return (
+    <>
+        <div onKeyDown={defaultKeyDownHandler} tabindex="0">
+            <div style={{backgroundColor: color, color: "white"}}>{color}</div>
+            // passing function to setColor also works
+            <button onClick={() => setColor(prevColor => "blue")}>blue</button>
+            <button onClick={() => setColor("red")}>red</button>
+            <button onClick={() => setColor("green")}>green</button>
+        </div>
+        <ForkedRedoTextField multiline></ForkedRedoTextField>
+    </>
+    );
+};
+```

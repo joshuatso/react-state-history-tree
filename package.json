@@ -26,8 +26,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "publish:npm": "rm -rf dist && mkdir dist &&  babel src -d dist --copy-files",
-    "publish-build": "./node_modules/.bin/babel src --out-file index.js"
+    "publish:npm": "rm -rf dist && mkdir dist &&  babel src -d dist --copy-files"
   },
   "eslintConfig": {
     "extends": "react-app"
