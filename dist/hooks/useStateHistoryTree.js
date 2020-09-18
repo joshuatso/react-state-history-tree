@@ -58,7 +58,14 @@ function useStateHistoryTree(initialState) {
       setAtLeaf = _useState10[1];
 
   function addValue(newValue) {
-    var newNode = new _Node.default(newValue);
+    var newNode;
+
+    if (newValue instanceof Function) {
+      newNode = new _Node.default(newValue(value));
+    } else {
+      newNode = new _Node.default(newValue);
+    }
+
     current.addChild(newNode);
     setCurrent(newNode);
   }
@@ -143,7 +150,8 @@ function useStateHistoryTree(initialState) {
   }, [current]);
 
   function defaultKeyDownHandler(e) {
-    // ctrl + z and ctrl + shift + z
+    console.log("in"); // ctrl + z and ctrl + shift + z
+
     if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
       e.preventDefault();
       e.stopPropagation();
