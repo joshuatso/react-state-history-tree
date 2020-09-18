@@ -81,7 +81,7 @@ The widget/popup can be used to select the desired redo branch to set as the sta
 * Clicking the corresponding cell will expand the cell if needed to see the entire value. 
 * Clicking on a selected cell submits the selection. 
 * The <kbd>Left</kbd> and <kbd>Right</kbd> keyboard arrows can be used to cycle through the cells.
-* <kbd>Enter</kbd> key can be used to submit a selction.
+* <kbd>Enter</kbd> key can be used to submit a selection.
 * The left bracket and right bracket buttons in the widget can be used to trigger, respectively, undo or redo to the closest fork (described above).
 
 ## Compatibility
