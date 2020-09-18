@@ -4,7 +4,7 @@ Included in this package:
 * a hook that extends React useState and stores state history, providing multiple-choice, customizable undo/redo functionality to states of any type (not just text)
 * a text field input React component that ships with aforementioned hook
 
-![Example of ForkedRedoTextField](/public/example.png)
+<img src="/public/example.png" alt="Example of ForkedRedoTextField" width="200"/>
 
 ## Introduction
 
