@@ -2,19 +2,9 @@
 
 Included in this package:
 * a hook that extends React useState and stores state history, providing multiple-choice, customizable undo/redo functionality to states of any type (not just text)
-* a text field input React component that ships with aforementioned hook
+* a text input React component that uses the aforementioned hook and provides forked redo functionality for the user in the form of a popup widget near the text caret
 
 <img src="/public/example.png" alt="Example of ForkedRedoTextField" width="500"/>
-
-## Introduction
-
-React states do not keep a history of their previous values. This must be implemented by the developer. The redux docs suggest one way to implement undo history: https://redux.js.org/recipes/implementing-undo-history.
-
-Traditionally, the undo/redo functionality has provided a single thread of history. If one undos and then rewrites the state, the former redo history is lost. This package therefore provides a solution that retains all redo histories no matter how many undos and rewrites are created.
-
-Additionally, undo/redo functionality is usually associated with text-based input. However, extending this functionality to non-text-based inputs is a logical and not-too-far-fetched abstraction. Graphics editors such as Adobe Photoshop have been implementing this functionality for a while.
-
-One final note; certain text editors may implement undo/redo functionality by building diff histories, which saves immensely on memory for large files. Other implementations store a reversible action for every forward action. Finally, in the case of editors that support irreversible or computationally-expensive-to-reverse actions, especially those of graphics editors, states may have to be saved. Still other implementations use a hybrid approach of the aforementioned implementations. This package is oblivious to the types of states being saved; therefore, it opts for the universal (though storage-intensive for large states) implementation of saving entire states to the tree.
 
 ## Installation
 
@@ -36,6 +26,20 @@ React must be installed separately, as it is not included in the dependencies. T
 import { useStateHistoryTree, ForkedRedoTextField } from "react-state-history-tree";
 ```
 
+## Background
+
+React states do not store a history of their previous values. This must be implemented by the developer. The redux docs suggest one way to implement undo history: https://redux.js.org/recipes/implementing-undo-history.
+
+Traditionally, the undo/redo functionality provides a single thread of history. If one undos and then rewrites the state, the former redo history is lost. This package therefore provides a solution that retains all redo histories no matter how many undos and rewrites are created.
+
+Additionally, undo/redo functionality is usually associated with text-based input. However, extending this functionality to non-text-based inputs is a logical and useful abstraction. Graphics editors such as Adobe Photoshop have been implementing this functionality for a while.
+
+One final note; certain text editors may implement undo/redo functionality by building diff histories, which saves immensely on memory for large files. Other implementations store a reversible action for every forward action. Finally, in the case of editors that support irreversible or computationally-expensive-to-reverse actions, especially those of graphics editors, there may be no other choice but to save entire states. Still other implementations use a hybrid approach of the aforementioned implementations. This package is oblivious to the types of states being saved; therefore, it opts for the universal (though storage-intensive for large states) implementation of saving entire states to the tree. 
+
+Under the hood, the useStateHistoryTree hook stores each iteration of the state as a node in a tree data structure. The initial state is stored at the root. When the state is updated, a node representing the new state is added as a child of the previous state. Each node has access to its parent (its undo state) and its children (its redo states). Each node stores its default redo path, which is either decided by the most recent rewrite or the most recent redo (whichever one comes later has priority). Therefore, at any given time, there always exists a default path from the root (initial state) to a leaf. This default path can be navigated on by traditional the <kbd>Ctrl</kbd> + <kbd>z</kbd> for undo and <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>z</kbd> for redo, as is familiar to most users (the defaultKeyDownHandler callback provides this functionality). The default path is only changed when the user rewrites or redos to a specific branch, as discussed before.
+
+Redos are only interesting when there are multiple options. These are represented as nodes in the tree with more than one child. Throughout the docs, this situation is called a "fork".
+
 ## Documentation
 
 ### useStateHistoryTree
@@ -53,7 +57,7 @@ Utilities is an object that has the following fields:
 | Field | Type | Description |
 | ----------- | ----------- | ----------- |
 | undo | `(toClosestFork: boolean) => void` | If `toClosestFork` is set as `false`, the state is set to the previous state. If `toClosestFork` is set as `true`, the state is set to the closest state in the past that had more than one redo branch. `toClosestFork` defaults to `false`. |
-| redo | `(pathIndex: number, toClosestFork: boolean) => void` | If `pathIndex` is set to a valid index of the current redo branches, the state is set to the redo state with that index. If `toClosestFork` is set as `false`, the state is set to the previous state. If `toClosestFork` is set as `true`, the state is set to the closest state in the past that had more than one redo branch. `pathIndex` defaults to `null` and `toClosestFork` defaults to `false`. |
+| redo | `(pathIndex: number, toClosestFork: boolean) => void` | If `pathIndex` is set to a valid index of the current redo branches, the state is set to the redo state with that index. If it is not, the default redo path is used (either decided by the most recent rewrite or the most recent redo, whichever one came last). If `toClosestFork` is set as `false`, the state is set to the previous state. If `toClosestFork` is set as `true`, the state is set to the closest state in the past that had more than one redo branch. `pathIndex` defaults to `null` and `toClosestFork` defaults to `false`. |
 | getCurrentBranches | `() => [branch: {index: number, value}]` | Returns the redo branches of the current state. |
 | getCurrentSubtree | `() => [node: {index: number, value, children: [node]}]` | Returns the same redo branches as `getCurrentBranches`, but includes nested children for deeper navigation. |
 | defaultKeyDownHandler | `(keydown event) => void` | This callback implements the default behavior for undo/redo: <kbd>Ctrl</kbd> + <kbd>z</kbd> for undo and <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>z</kbd> for redo (<kbd>command</kbd> instead of <kbd>Ctrl</kbd> is used for Mac users). **IMPORTANT NOTE:** When `defaultKeyDownHandler` is applied to certain tags (including div), the `tabindex` attribute must be set to `"0"` for the handler to work properly.|
@@ -126,3 +130,7 @@ export default function Test() {
     );
 };
 ```
+
+### Epilogue
+
+This package is in early development. Thank you for taking the time to read about, use, and make suggestions for this package. All issues and inquiries can be directed to GitHub.
