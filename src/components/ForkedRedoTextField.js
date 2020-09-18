@@ -4,7 +4,7 @@ import DoButton from "./DoButton.js"
 import RedoCell from "./RedoCell"
 import '../ForkedRedoTextField.css'
 
-export default function ForkedRedoTextField({multiline=false, inputStyles, unselectedCellStyles={}, selectedCellStyles={}, cellAreaStyles={}, doButtonStyles={}, widgetContainerStyles={}}) {
+export default function ForkedRedoTextField({multiline=false, rows=3, inputStyles, unselectedCellStyles={}, selectedCellStyles={}, cellAreaStyles={}, doButtonStyles={}, widgetContainerStyles={}}) {
     const [treeValue, setTreeValue, {undo, redo, getCurrentBranches, defaultKeyDownHandler, atRoot, atLeaf}] = useStateHistoryTree("")
     const widgetRef = useRef(null)
     const inputRef = useRef(null)
@@ -29,7 +29,7 @@ export default function ForkedRedoTextField({multiline=false, inputStyles, unsel
             setBranches(getCurrentBranches().map(branch => branch.value))
             setWidgetOpen(true)
             setDummyOpen(true)
-        } else if (widgetOpen && (e.key === 'Left' || e.key === "ArrowLeft")) {
+        } else if (widgetOpen && (e.key === 'Left' || e.key === 'ArrowLeft')) {
             e.preventDefault()
             e.stopPropagation()
             // start from right if selected does not exist yet
@@ -38,7 +38,7 @@ export default function ForkedRedoTextField({multiline=false, inputStyles, unsel
             } else {
                 setSelectedBranchIndex(prevIndex => (prevIndex-1)%(branches.length))
             }
-        } else if (widgetOpen && (e.key === 'Right' || e.key === "ArrowRight")) {
+        } else if (widgetOpen && (e.key === 'Right' || e.key === 'ArrowRight')) {
             e.preventDefault()
             e.stopPropagation()
             // start from left if selected does not exist yet
@@ -47,6 +47,12 @@ export default function ForkedRedoTextField({multiline=false, inputStyles, unsel
             } else  {
                 setSelectedBranchIndex(prevIndex => (prevIndex+1)%(branches.length))
             }
+        } else if (widgetOpen && selectedBranchIndex !== null && e.key === "Enter") {
+            e.preventDefault()
+            e.stopPropagation()
+            redo(selectedBranchIndex)
+            inputRef.current.focus()
+            closeWidget()
         } else {
             setWidgetOpen(false)
         }
@@ -135,7 +141,7 @@ export default function ForkedRedoTextField({multiline=false, inputStyles, unsel
                 <textarea 
                     ref={inputRef} 
                     style={inputStyles ? {resize: "none", ...inputStyles} : {resize: "none"}} 
-                    rows={5} 
+                    rows={rows} 
                     value={treeValue} 
                     onChange={e => setTreeValue(e.target.value)} 
                     onKeyDown={keyDownHandler}

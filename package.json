@@ -1,6 +1,7 @@
 {
   "name": "react-state-history-tree",
   "author": "Joshua Tso",
+  "license": "MIT",
   "version": "0.1.0",
   "main": "index.js",
   "private": false,
@@ -23,7 +24,7 @@
     "branches",
     "react-component"
   ],
-  "license": "MIT",
+  "homepage": "https://github.com/joshuatso/react-state-history-tree",
   "dependencies": {
   },
   "scripts": {

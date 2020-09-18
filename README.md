@@ -1,10 +1,8 @@
 # React State History Tree
 
 Included in this package:
-* a hook that extends React useState and tracks state history, providing multiple-choice, customizable undo/redo functionality to states of any type (not just text)
+* a hook that extends React useState and stores state history, providing multiple-choice, customizable undo/redo functionality to states of any type (not just text)
 * a text field input React component that ships with aforementioned hook
-
-[Skip to Installation](##Installation)
 
 ## Introduction
 
@@ -76,10 +74,34 @@ Utilities is an object that has the following fields:
 | redo | `(pathIndex: number, toClosestFork: boolean) => void` | If `pathIndex` is set to a valid index of the current redo branches, the state is set to the redo state with that index. If `toClosestFork` is set as `false`, the state is set to the previous state. If `toClosestFork` is set as `true`, the state is set to the closest state in the past that had more than one redo branch. `toClosestFork` defaults to `false`.
 | getCurrentBranches | `() => [branch: {index: number, value}]` | Returns the redo branches of the current state.
 | getCurrentSubtree | `() => [node: {index: number, value, children: [node]}]` | Returns the same redo branches as `getCurrentBranches`, but includes nested children for deeper navigation.
-| defaultKeyDownHandler | `(keydown event) => void` | This callback implements the default behavior for undo/redo: Ctrl + 'z' for undo and Ctrl + Shift + 'z' for redo (Command is used for Mac users).
+| defaultKeyDownHandler | `(keydown event) => void` | This callback implements the default behavior for undo/redo: <kbd>Ctrl</kbd> + <kbd>z</kbd> for undo and <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>z</kbd> for redo (<kbd>command</kbd> instead of <kbd>Ctrl</kbd> is used for Mac users).
 | atRoot | boolean | `true` if current state is the initial state, `false` otherwise.
 | atLeaf | boolean | `true` if current state has no redo branches, `false` otherwise.
 
+### ForkedRedoTextField
+
+ForkedRedoTextField is a React component that applies the useStateHistoryTree hook to a html input or textarea. The component uses the defaultKeyHandler in conjunction with a listener that opens a widget near the text caret cursor for selecting the desired redo branch when the user enters <kbd>Ctrl</kbd> + <kbd>y</kbd> (<kbd>command</kbd> instead of <kbd>Ctrl</kbd> is used for Mac users). The component allows for several stylistic customizations.
+
+Props for ForkedRedoTextField:
+
+| Prop | Type | Default | Description |
+| multiline | boolean | false | Uses `<textarea/>` if `true`, `<input/>` otherwise.
+| rows | number | 3 | The number of rows if multiline.
+| inputStyles | jsx style object | N/A | Styles applied to the input element.
+| unSelectedCellStyles | jsx style object | N/A | Styles applied to the unselected widget cells.
+| selectedCellStyles | jsx style object | N/A | Styles applied to the selected widget cell.
+| cellAreaStyles | jsx style object | N/A | Styles applied to the cell area in the widget.
+| doButtonStyles | jsx style object | N/A | Styles applied to the undo/redo to closest fork buttons in the widget.
+| widgetContainerStyles | jsx style object | N/A | Styles applied to the widget container.
+
+#### Navigating the ForkedRedoTextField widget
+
+The widget/popup can be used to select the desired redo branch to set as the state:
+* Clicking the corresponding cell will expand the cell if needed to see the entire value. 
+* Clicking on a selected cell submits the selection. 
+* The <kbd>Left</kbd> and <kbd>Right</kbd> keyboard arrows can be used to cycle through the cells.
+* <kbd>Enter</kbd> key can be used to submit a selction.
+* The left bracket and right bracket buttons in the widget can be used to trigger, respectively, undo or redo to the closest fork (described above).
 
 ## Compatibility
 
