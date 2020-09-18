@@ -2,7 +2,7 @@ import React, {useEffect, useLayoutEffect, useRef, useState, useCallback} from '
 import useStateHistoryTree from "../hooks/useStateHistoryTree"
 import DoButton from "./DoButton.js"
 import RedoCell from "./RedoCell"
-import '../App.css'
+import '../ForkedRedoTextField.css'
 
 export default function ForkedRedoTextField({multiline=false, inputStyles, unselectedCellStyles={}, selectedCellStyles={}, cellAreaStyles={}, doButtonStyles={}, widgetContainerStyles={}}) {
     const [treeValue, setTreeValue, {undo, redo, getCurrentBranches, defaultKeyDownHandler, atRoot, atLeaf}] = useStateHistoryTree("")
