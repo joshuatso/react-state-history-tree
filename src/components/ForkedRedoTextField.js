@@ -19,17 +19,9 @@ export default function ForkedRedoTextField({multiline=false, rows=3, inputStyle
     const [completeInputStyles, setCompleteInputStyles] = useState({})
     const [coordinates, setCoordinates] = useState(null)
 
-    // adding forked redo and widget navigation functionality to default handler
-    function keyDownHandler(e) {
-        defaultKeyDownHandler(e)
-        // open widget
-        if ((e.metaKey || e.ctrlKey) && e.key === 'y' && !e.shiftKey) {
-            e.preventDefault()
-            e.stopPropagation()
-            setBranches(getCurrentBranches().map(branch => branch.value))
-            setWidgetOpen(true)
-            setDummyOpen(true)
-        } else if (widgetOpen && (e.key === 'Left' || e.key === 'ArrowLeft')) {
+    // widget navigation functionality, returns if widget should be kept open
+    function navigationHandler(e) {
+        if (widgetOpen && (e.key === 'Left' || e.key === 'ArrowLeft')) {
             e.preventDefault()
             e.stopPropagation()
             // start from right if selected does not exist yet
@@ -38,6 +30,7 @@ export default function ForkedRedoTextField({multiline=false, rows=3, inputStyle
             } else {
                 setSelectedBranchIndex(prevIndex => (prevIndex-1)%(branches.length))
             }
+            return true
         } else if (widgetOpen && (e.key === 'Right' || e.key === 'ArrowRight')) {
             e.preventDefault()
             e.stopPropagation()
@@ -47,14 +40,31 @@ export default function ForkedRedoTextField({multiline=false, rows=3, inputStyle
             } else  {
                 setSelectedBranchIndex(prevIndex => (prevIndex+1)%(branches.length))
             }
+            return true
         } else if (widgetOpen && selectedBranchIndex !== null && e.key === "Enter") {
             e.preventDefault()
             e.stopPropagation()
             redo(selectedBranchIndex)
             inputRef.current.focus()
             closeWidget()
+            return false
+        }
+        return false
+    }
+
+    // adding forked redo and widget navigation functionality to default handler
+    function keyDownHandler(e) {
+        defaultKeyDownHandler(e)
+        const keepOpen = navigationHandler(e)
+        // open widget
+        if ((e.metaKey || e.ctrlKey) && e.key === 'y' && !e.shiftKey) {
+            e.preventDefault()
+            e.stopPropagation()
+            setBranches(getCurrentBranches().map(branch => branch.value))
+            setWidgetOpen(true)
+            setDummyOpen(true)
         } else {
-            setWidgetOpen(false)
+            setWidgetOpen(keepOpen)
         }
     }
 
@@ -175,6 +185,8 @@ export default function ForkedRedoTextField({multiline=false, rows=3, inputStyle
                     flexDirection: "row",
                     ...widgetContainerStyles
                 }}
+                onKeyDown={navigationHandler}
+                tabIndex="0"
             >
                 <DoButton type={"left"} 
                     doButtonStyles={doButtonStyles} 

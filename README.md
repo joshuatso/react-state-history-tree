@@ -34,12 +34,6 @@ Traditionally, the undo/redo functionality provides a single thread of history. 
 
 Additionally, undo/redo functionality is usually associated with text-based input. However, extending this functionality to non-text-based inputs is a logical and useful abstraction. Graphics editors such as Adobe Photoshop have been implementing this functionality for a while.
 
-Certain text editors may implement undo/redo functionality by building diff histories, which saves immensely on memory for large files. Other implementations store a reversible action for every forward action. Finally, in the case of editors that support irreversible or computationally-expensive-to-reverse actions, especially those of graphics editors, there may be no other choice but to save entire states. Still other implementations use a hybrid approach of the aforementioned implementations. This package is oblivious to the types of states being saved; therefore, it opts for the universal (though storage-intensive for large states) implementation of saving entire states to the tree. 
-
-Under the hood, the useStateHistoryTree hook stores each iteration of the state as a node in a tree data structure. The initial state is stored at the root. When the state is updated, a node representing the new state is added as a child of the previous state. Each node has access to its parent (its undo state) and its children (its redo states). Each node stores its default redo path, which is either decided by the most recent rewrite or the most recent redo (whichever one comes later has priority). Therefore, at any given time, there always exists a default path from the root (initial state) to a leaf. This default path can be navigated on by traditional the <kbd>Ctrl</kbd> + <kbd>z</kbd> for undo and <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>z</kbd> for redo, as is familiar to most users (the defaultKeyDownHandler callback provides this functionality). The default path is only changed when the user rewrites or redos to a specific branch, as discussed before.
-
-Redos are only interesting when there are multiple options. These are represented as nodes in the tree with more than one child. Throughout the docs, this situation is called a "fork".
-
 ## Documentation
 
 ### useStateHistoryTree
@@ -96,6 +90,14 @@ The widget/popup can be used to select the desired redo branch to set as the sta
 ### React
 
 This package uses hooks, so React 16.8 or newer is required.
+
+## Implementation
+
+Certain text editors may implement undo/redo functionality by building diff histories, which saves immensely on memory for large files. Other implementations store a reversible action for every forward action. Finally, in the case of editors that support irreversible or computationally-expensive-to-reverse actions, especially those of graphics editors, there may be no other choice but to save entire states. Still other implementations use a hybrid approach of the aforementioned implementations. This package is oblivious to the types of states being saved; therefore, it opts for the universal (though storage-intensive for large states) implementation of saving entire states to the tree. 
+
+Under the hood, the useStateHistoryTree hook stores each iteration of the state as a node in a tree data structure. The initial state is stored at the root. When the state is updated, a node representing the new state is added as a child of the previous state. Each node has access to its parent (its undo state) and its children (its redo states). Each node stores its default redo path, which is either decided by the most recent rewrite or the most recent redo (whichever one comes later has priority). Therefore, at any given time, there always exists a default path from the root (initial state) to a leaf. This default path can be navigated on by traditional the <kbd>Ctrl</kbd> + <kbd>z</kbd> for undo and <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>z</kbd> for redo, as is familiar to most users (the defaultKeyDownHandler callback provides this functionality). The default path is only changed when the user rewrites or redos to a specific branch, as discussed before.
+
+Redos are only interesting when there are multiple options. These are represented as nodes in the tree with more than one child. Throughout the docs, this situation is called a "fork".
 
 ## Example
 
