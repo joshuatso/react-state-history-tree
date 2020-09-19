@@ -106,21 +106,11 @@ function ForkedRedoTextField(_ref) {
   var _useState11 = (0, _react.useState)(null),
       _useState12 = _slicedToArray(_useState11, 2),
       coordinates = _useState12[0],
-      setCoordinates = _useState12[1]; // adding forked redo and widget navigation functionality to default handler
+      setCoordinates = _useState12[1]; // widget navigation functionality, returns if widget should be kept open
 
 
-  function keyDownHandler(e) {
-    defaultKeyDownHandler(e); // open widget
-
-    if ((e.metaKey || e.ctrlKey) && e.key === 'y' && !e.shiftKey) {
-      e.preventDefault();
-      e.stopPropagation();
-      setBranches(getCurrentBranches().map(function (branch) {
-        return branch.value;
-      }));
-      setWidgetOpen(true);
-      setDummyOpen(true);
-    } else if (widgetOpen && (e.key === 'Left' || e.key === 'ArrowLeft')) {
+  function navigationHandler(e) {
+    if (widgetOpen && (e.key === 'Left' || e.key === 'ArrowLeft')) {
       e.preventDefault();
       e.stopPropagation(); // start from right if selected does not exist yet
 
@@ -131,6 +121,8 @@ function ForkedRedoTextField(_ref) {
           return (prevIndex - 1) % branches.length;
         });
       }
+
+      return true;
     } else if (widgetOpen && (e.key === 'Right' || e.key === 'ArrowRight')) {
       e.preventDefault();
       e.stopPropagation(); // start from left if selected does not exist yet
@@ -142,14 +134,35 @@ function ForkedRedoTextField(_ref) {
           return (prevIndex + 1) % branches.length;
         });
       }
+
+      return true;
     } else if (widgetOpen && selectedBranchIndex !== null && e.key === "Enter") {
       e.preventDefault();
       e.stopPropagation();
       redo(selectedBranchIndex);
       inputRef.current.focus();
       closeWidget();
+      return false;
+    }
+
+    return false;
+  } // adding forked redo and widget navigation functionality to default handler
+
+
+  function keyDownHandler(e) {
+    defaultKeyDownHandler(e);
+    var keepOpen = navigationHandler(e); // open widget
+
+    if ((e.metaKey || e.ctrlKey) && e.key === 'y' && !e.shiftKey) {
+      e.preventDefault();
+      e.stopPropagation();
+      setBranches(getCurrentBranches().map(function (branch) {
+        return branch.value;
+      }));
+      setWidgetOpen(true);
+      setDummyOpen(true);
     } else {
-      setWidgetOpen(false);
+      setWidgetOpen(keepOpen);
     }
   }
 
@@ -303,7 +316,9 @@ function ForkedRedoTextField(_ref) {
       zIndex: 100,
       display: widgetOpen && !(atRoot && atLeaf) ? "flex" : "none",
       flexDirection: "row"
-    }, widgetContainerStyles)
+    }, widgetContainerStyles),
+    onKeyDown: navigationHandler,
+    tabIndex: "0"
   }, /*#__PURE__*/_react.default.createElement(_DoButton.default, {
     type: "left",
     doButtonStyles: doButtonStyles,

@@ -50,7 +50,8 @@ function Test() {
     tabindex: "0"
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      backgroundColor: color
+      backgroundColor: color,
+      color: "white"
     }
   }, color), /*#__PURE__*/_react.default.createElement("button", {
     onClick: function onClick() {

@@ -50,8 +50,8 @@ Utilities is an object that has the following fields:
 
 | Field | Type | Description |
 | ----------- | ----------- | ----------- |
-| undo | `(toClosestFork: boolean) => void` | If `toClosestFork` is set as `false`, the state is set to the previous state. If `toClosestFork` is set as `true`, the state is set to the closest state in the past that had more than one redo branch. `toClosestFork` defaults to `false`. |
-| redo | `(pathIndex: number, toClosestFork: boolean) => void` | If `pathIndex` is set to a valid index of the current redo branches, the state is set to the redo state with that index. If it is not, the default redo path is used (either decided by the most recent rewrite or the most recent redo, whichever one came last). If `toClosestFork` is set as `false`, the state is set to the previous state. If `toClosestFork` is set as `true`, the state is set to the closest state in the past that had more than one redo branch. `pathIndex` defaults to `null` and `toClosestFork` defaults to `false`. |
+| undo | `(toClosestFork: boolean) => void` | If `toClosestFork=false`, the state is set to the previous state. If `toClosestFork=true`, the state is set to the closest state in the past that had more than one redo branch. `toClosestFork` defaults to `false`. |
+| redo | `(pathIndex: number, toClosestFork: boolean) => void` | If `pathIndex` is set to a valid index of the current redo branches, the state is set to the redo state with that index. If it is not, the default redo path is used (either decided by the most recent rewrite or the most recent redo, whichever one came last). If `toClosestFork=false`, the state is set to the previous state. If `toClosestFork=true`, the state is set to the closest state in the past that had more than one redo branch. `pathIndex` defaults to `null` and `toClosestFork` defaults to `false`. |
 | getCurrentBranches | `() => [branch: {index: number, value}]` | Returns the redo branches of the current state. |
 | getCurrentSubtree | `() => [node: {index: number, value, children: [node]}]` | Returns the same redo branches as `getCurrentBranches`, but includes nested children for deeper navigation. |
 | defaultKeyDownHandler | `(keydown event) => void` | This callback implements the default behavior for undo/redo: <kbd>Ctrl</kbd> + <kbd>z</kbd> for undo and <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>z</kbd> for redo (<kbd>command</kbd> instead of <kbd>Ctrl</kbd> is used for Mac users). **IMPORTANT NOTE:** When `defaultKeyDownHandler` is applied to certain tags (including div), the `tabindex` attribute must be set to `"0"` for the handler to work properly.|
@@ -101,7 +101,7 @@ Redos are only interesting when there are multiple options. These are represente
 
 ## Example
 
-Below is an example of using the useStateHistoryTree hook on a non-text state and applying the defaultKeyDownHandler to a container div (note `tabindex="0"`) to control the background color. Also note that passing a function to `setColor` is also supported, just as in React's useState hook. Use of a ForkedRedoTextField component is also demonstrated.
+Below is an example of using the useStateHistoryTree hook on a non-text state and applying the defaultKeyDownHandler to a container div (note `tabindex="0"`) to control the background color of another div. Also note that passing a function to `setColor` is also supported, just as in React's useState hook. Use of a ForkedRedoTextField component is also demonstrated.
 
 ```js
 import React, { useState } from "react";

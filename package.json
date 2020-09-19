@@ -20,9 +20,7 @@
     "react-component"
   ],
   "homepage": "https://github.com/joshuatso/react-state-history-tree",
-  "dependencies": {
-    "@material-ui/core": "^4.11.0"
-  },
+  "dependencies": {},
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
