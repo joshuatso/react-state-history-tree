@@ -4,7 +4,7 @@ Included in this package:
 * a hook that extends React useState and stores state history, providing multiple-choice, customizable undo/redo functionality to states of any type (not just text)
 * a text input React component that uses the aforementioned hook and provides forked redo functionality for the user in the form of a popup widget near the text caret
 
-<img src="/public/demonstration.gif" alt="Example of ForkedRedoTextField" width="500"/>
+![Example of ForkedRedoTextField](https://github.com/joshuatso/react-state-history-tree/blob/master/public/demonstration.gif?raw=true)
 
 ## Installation
 

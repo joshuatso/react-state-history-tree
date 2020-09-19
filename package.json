@@ -17,7 +17,8 @@
     "redo",
     "forked",
     "branches",
-    "react-component"
+    "react-component",
+    "textfield"
   ],
   "homepage": "https://github.com/joshuatso/react-state-history-tree",
   "dependencies": {},
