@@ -54,7 +54,7 @@ useStateHistoryTree's second return value, named `setState` above has the follow
 setState(State | State => State, Boolean=true) => void
 ```
 
-**Update: (version 1.1.1)** Support for conditional committing to the history tree is now supported. Inspiration for this functionality is from [ayc0]("https://www.npmjs.com/~ayc0")'s https://www.npmjs.com/package/use-history-state.
+**Update (version >1.1.1):** Support for conditional committing to the history tree is now supported. Inspiration for this functionality is from [ayc0]("https://www.npmjs.com/~ayc0")'s [use-history-state]("https://www.npmjs.com/package/use-history-state").
 
 `setState` supports functional state updates. The second argument (defaulted to `true`) commits the state update to the history tree if `true` and updates state without committing to the history tree if `false`. Therefore, if one wishes to create a state that can be rolled back to in the future, leave this value as `true`. If one wants a normal state update (also saving memory), set this value to `false`.
 
@@ -116,10 +116,6 @@ Redos are only interesting when there are multiple options. These are represente
 Below is an example of using the useStateHistoryTree hook on a non-text state and applying the defaultKeyDownHandler to the window to control the background color of a div. Note that the state updates that do not change the color are not committed to the history tree. Use of a ForkedRedoTextField component is also demonstrated.
 
 ```js
-import React, {useState, useEffect} from 'react'
-import useStateHistoryTree from "../hooks/useStateHistoryTree"
-import ForkedRedoTextField from "./ForkedRedoTextField"
-
 export default function Test() {
     const [color, setColor, 
               {
@@ -135,7 +131,7 @@ export default function Test() {
 
     const ColorButton = ({buttonColor}) => 
         <button 
-            // update state, but only commit to history tree if color is differs from current
+            // update state, but only commit to history tree if color differs from current
             onClick={() => setColor(buttonColor, color != buttonColor)}
         >
             {buttonColor}
