@@ -1,7 +1,7 @@
 # React State History Tree
 
 Included in this package:
-* a hook that extends React useState and stores state history, providing multiple-choice, customizable undo/redo functionality to states of any type (not just text)
+* a hook that extends React useState and stores state history, providing multiple-choice, customizable undo/redo functionality to states of any type (not just text inputs)
 * a text input React component that uses the aforementioned hook and provides forked redo functionality for the user in the form of a popup widget near the text caret
 
 **Note:** "History" as mentioned in this document has no relation to the react router history.
@@ -34,7 +34,7 @@ React states do not store a history of their previous values. This must be imple
 
 Traditionally, the undo/redo functionality provides a single thread of history. If one undos and then rewrites the state, the former redo history is lost. This package therefore provides a solution that retains all redo histories no matter how many undos and rewrites are created.
 
-Additionally, undo/redo functionality is usually associated with text-based input. However, extending this functionality to non-text-based inputs is a logical and useful abstraction. Graphics editors such as Adobe Photoshop have been implementing this functionality for a while.
+Additionally, undo/redo functionality is usually associated with text input. However, extending this functionality to non-text-based inputs is a logical and useful abstraction. Graphics editors such as Adobe Photoshop have been implementing this functionality for a while.
 
 ## Documentation
 
@@ -54,7 +54,7 @@ useStateHistoryTree's second return value, named `setState` above has the follow
 setState(State | State => State, Boolean=true) => void
 ```
 
-**Update (version >1.1.1):** Support for conditional committing to the history tree is now supported. Inspiration for this functionality is from [ayc0]("https://www.npmjs.com/~ayc0")'s [use-history-state]("https://www.npmjs.com/package/use-history-state").
+**Update (version >1.1.1):** Support for conditional committing to the history tree is now supported. Inspiration for this functionality is from [ayc0](https://www.npmjs.com/~ayc0)'s [use-history-state](https://www.npmjs.com/package/use-history-state).
 
 `setState` supports functional state updates. The second argument (defaulted to `true`) commits the state update to the history tree if `true` and updates state without committing to the history tree if `false`. Therefore, if one wishes to create a state that can be rolled back to in the future, leave this value as `true`. If one wants a normal state update (also saving memory), set this value to `false`.
 
@@ -113,7 +113,7 @@ Redos are only interesting when there are multiple options. These are represente
 
 ## Example
 
-Below is an example of using the useStateHistoryTree hook on a non-text state and applying the defaultKeyDownHandler to the window to control the background color of a div. Note that the state updates that do not change the color are not committed to the history tree. Use of a ForkedRedoTextField component is also demonstrated.
+Below is an example of using the useStateHistoryTree hook on a non-text-input state and applying the defaultKeyDownHandler to the window to control the background color of a div. Note that the state updates that do not change the color are not committed to the history tree. Use of a ForkedRedoTextField component is also demonstrated.
 
 ```js
 export default function Test() {
@@ -131,7 +131,8 @@ export default function Test() {
 
     const ColorButton = ({buttonColor}) => 
         <button 
-            // update state, but only commit to history tree if color differs from current
+            // update state, but only commit to history tree 
+            // if color differs from current
             onClick={() => setColor(buttonColor, color != buttonColor)}
         >
             {buttonColor}
@@ -161,4 +162,4 @@ export default function Test() {
 
 This package is in early development. Thank you for taking the time to read about, use, and make suggestions for this package. All issues and inquiries can be directed to GitHub.
 
-Thank you to [ayc0]("https://www.npmjs.com/~ayc0") for the inspiration of providing a paramter to determine when to commit to the history tree. Thank you to [Alexander Zsikla]("https://github.com/alexz12948") and [Andrew Zhang]("https://github.com/Andrewyzhang") for their suggestions regarding the documentation.
+Thank you to [ayc0](https://www.npmjs.com/~ayc0) for the inspiration of providing a paramter to determine when to commit to the history tree. Thank you to [Alexander Zsikla](https://github.com/alexz12948) and [Andrew Zhang](https://github.com/Andrewyzhang) for their suggestions regarding the documentation.
