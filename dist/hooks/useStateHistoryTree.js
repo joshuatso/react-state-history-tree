@@ -58,16 +58,22 @@ function useStateHistoryTree(initialState) {
       setAtLeaf = _useState10[1];
 
   function addValue(newValue) {
-    var newNode;
+    var commit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
-    if (newValue instanceof Function) {
-      newNode = new _Node.default(newValue(value));
+    if (commit) {
+      var newNode;
+
+      if (newValue instanceof Function) {
+        newNode = new _Node.default(newValue(value));
+      } else {
+        newNode = new _Node.default(newValue);
+      }
+
+      current.addChild(newNode);
+      setCurrent(newNode);
     } else {
-      newNode = new _Node.default(newValue);
+      setValue(newValue);
     }
-
-    current.addChild(newNode);
-    setCurrent(newNode);
   }
 
   function undo() {
@@ -150,8 +156,7 @@ function useStateHistoryTree(initialState) {
   }, [current]);
 
   function defaultKeyDownHandler(e) {
-    console.log("in"); // ctrl + z and ctrl + shift + z
-
+    // ctrl + z and ctrl + shift + z
     if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
       e.preventDefault();
       e.stopPropagation();

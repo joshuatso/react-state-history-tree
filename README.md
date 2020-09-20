@@ -4,6 +4,8 @@ Included in this package:
 * a hook that extends React useState and stores state history, providing multiple-choice, customizable undo/redo functionality to states of any type (not just text)
 * a text input React component that uses the aforementioned hook and provides forked redo functionality for the user in the form of a popup widget near the text caret
 
+**Note:** "History" as mentioned in this document has no relation to the react router history.
+
 ![Example of ForkedRedoTextField](https://github.com/joshuatso/react-state-history-tree/blob/master/public/demonstration.gif?raw=true)
 
 ## Installation
@@ -28,7 +30,7 @@ import { useStateHistoryTree, ForkedRedoTextField } from "react-state-history-tr
 
 ## Background
 
-React states do not store a history of their previous values. This must be implemented by the developer. The redux docs suggest one way to implement undo history: https://redux.js.org/recipes/implementing-undo-history. **Note:** "History" as mentioned in this document has no relation to the react router history.
+React states do not store a history of their previous values. This must be implemented by the developer. The redux docs suggest one way to implement undo history: https://redux.js.org/recipes/implementing-undo-history.
 
 Traditionally, the undo/redo functionality provides a single thread of history. If one undos and then rewrites the state, the former redo history is lost. This package therefore provides a solution that retains all redo histories no matter how many undos and rewrites are created.
 
@@ -47,7 +49,10 @@ const [state, setState, utilities] = useStateHistoryTree(initialState)
 The first two return values follow the `[state, setState]` return convention from React's useState hook. 
 
 useStateHistoryTree's second return value, named `setState` above has the following signature:
-`setState(State | State => State, Boolean=true) => void`
+
+```
+setState(State | State => State, Boolean=true) => void
+```
 
 **Update: (version 1.1.1)** Support for conditional committing to the history tree is now supported. Inspiration for this functionality is from ayc0's https://www.npmjs.com/package/use-history-state.
 
@@ -129,7 +134,10 @@ export default function Test() {
         ] = useStateHistoryTree("blue")
 
     const ColorButton = ({buttonColor}) => 
-        <button onClick={() => setColor(buttonColor, color != buttonColor)}>
+        <button 
+            // update state, but only commit to history tree if color is differs from current
+            onClick={() => setColor(buttonColor, color != buttonColor)}
+        >
             {buttonColor}
         </button>
 
@@ -155,4 +163,4 @@ export default function Test() {
 
 ## Issues
 
-This package is in early development. Thank you for taking the time to read about, use, and make suggestions for this package. All issues and inquiries can be directed to GitHub.
+This package is in early development. Thank you for taking the time to read about, use, and make suggestions for this package. Thank you to ayc0 for the inspiration of providing a paramter to determine when to commit to the history tree. All issues and inquiries can be directed to GitHub.

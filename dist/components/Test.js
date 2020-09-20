@@ -13,6 +13,8 @@ var _useStateHistoryTree4 = _interopRequireDefault(require("../hooks/useStateHis
 
 var _ForkedRedoTextField = _interopRequireDefault(require("./ForkedRedoTextField"));
 
+var _CssBaseline = _interopRequireDefault(require("@material-ui/core/CssBaseline"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
@@ -45,31 +47,41 @@ function Test() {
       atRoot = _useStateHistoryTree3.atRoot,
       atLeaf = _useStateHistoryTree3.atLeaf;
 
-  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("div", {
-    onKeyDown: defaultKeyDownHandler,
-    tabindex: "0"
-  }, /*#__PURE__*/_react.default.createElement("div", {
+  var ColorButton = function ColorButton(_ref) {
+    var buttonColor = _ref.buttonColor;
+    return /*#__PURE__*/_react.default.createElement("button", {
+      onClick: function onClick() {
+        return setColor(buttonColor, color != buttonColor);
+      }
+    }, buttonColor);
+  };
+
+  (0, _react.useEffect)(function () {
+    window.addEventListener("keydown", defaultKeyDownHandler);
+    return function () {
+      window.removeEventListener("keydown", defaultKeyDownHandler);
+    };
+  });
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_CssBaseline.default, null), /*#__PURE__*/_react.default.createElement("div", {
     style: {
       backgroundColor: color,
       color: "white"
     }
-  }, color), /*#__PURE__*/_react.default.createElement("button", {
-    onClick: function onClick() {
-      return setColor(function (prevColor) {
-        return "blue";
-      });
+  }, color), /*#__PURE__*/_react.default.createElement(ColorButton, {
+    buttonColor: "yellow"
+  }), /*#__PURE__*/_react.default.createElement(ColorButton, {
+    buttonColor: "blue"
+  }), /*#__PURE__*/_react.default.createElement(ColorButton, {
+    buttonColor: "red"
+  }), /*#__PURE__*/_react.default.createElement(ColorButton, {
+    buttonColor: "green"
+  }), /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      margin: "200px"
     }
-  }, "blue"), /*#__PURE__*/_react.default.createElement("button", {
-    onClick: function onClick() {
-      return setColor("red");
-    }
-  }, "red"), /*#__PURE__*/_react.default.createElement("button", {
-    onClick: function onClick() {
-      return setColor("green");
-    }
-  }, "green")), /*#__PURE__*/_react.default.createElement(_ForkedRedoTextField.default, {
+  }, /*#__PURE__*/_react.default.createElement(_ForkedRedoTextField.default, {
     multiline: true
-  }));
+  })));
 }
 
 ;
