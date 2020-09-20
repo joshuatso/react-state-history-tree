@@ -54,7 +54,7 @@ useStateHistoryTree's second return value, named `setState` above has the follow
 setState(State | State => State, Boolean=true) => void
 ```
 
-**Update: (version 1.1.1)** Support for conditional committing to the history tree is now supported. Inspiration for this functionality is from ayc0's https://www.npmjs.com/package/use-history-state.
+**Update: (version 1.1.1)** Support for conditional committing to the history tree is now supported. Inspiration for this functionality is from [ayc0]("https://www.npmjs.com/~ayc0")'s https://www.npmjs.com/package/use-history-state.
 
 `setState` supports functional state updates. The second argument (defaulted to `true`) commits the state update to the history tree if `true` and updates state without committing to the history tree if `false`. Therefore, if one wishes to create a state that can be rolled back to in the future, leave this value as `true`. If one wants a normal state update (also saving memory), set this value to `false`.
 
@@ -163,4 +163,4 @@ export default function Test() {
 
 ## Issues
 
-This package is in early development. Thank you for taking the time to read about, use, and make suggestions for this package. Thank you to ayc0 for the inspiration of providing a paramter to determine when to commit to the history tree. All issues and inquiries can be directed to GitHub.
+This package is in early development. Thank you for taking the time to read about, use, and make suggestions for this package. Thank you to [ayc0]("https://www.npmjs.com/~ayc0") for the inspiration of providing a paramter to determine when to commit to the history tree. All issues and inquiries can be directed to GitHub.
