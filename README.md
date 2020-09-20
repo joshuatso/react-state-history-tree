@@ -28,7 +28,7 @@ import { useStateHistoryTree, ForkedRedoTextField } from "react-state-history-tr
 
 ## Background
 
-React states do not store a history of their previous values. This must be implemented by the developer. The redux docs suggest one way to implement undo history: https://redux.js.org/recipes/implementing-undo-history.
+React states do not store a history of their previous values. This must be implemented by the developer. The redux docs suggest one way to implement undo history: https://redux.js.org/recipes/implementing-undo-history. **Note:** "History" as mentioned in this document has no relation to the react router history.
 
 Traditionally, the undo/redo functionality provides a single thread of history. If one undos and then rewrites the state, the former redo history is lost. This package therefore provides a solution that retains all redo histories no matter how many undos and rewrites are created.
 
@@ -44,7 +44,14 @@ The useStateHistoryTree hook can be used as follows:
 const [state, setState, utilities] = useStateHistoryTree(initialState)
 ```
 
-The first two return values follow the `[state, setState]` return convention from React's useState hook. However, useStateHistoryTree's second argument, `setState` commits the state change to the state history tree, creating a state that can be rolled backed to in the future. If one does not want to commit to the tree on every state change, then another state must be used to track all the changes and `setState` can be invoked on a conditional basis.
+The first two return values follow the `[state, setState]` return convention from React's useState hook. 
+
+useStateHistoryTree's second return value, named `setState` above has the following signature:
+`setState(State | State => State, Boolean=true) => void`
+
+**Update: (version 1.1.1)** Support for conditional committing to the history tree is now supported. Inspiration for this functionality is from ayc0's https://www.npmjs.com/package/use-history-state.
+
+`setState` supports functional state updates. The second argument (defaulted to `true`) commits the state update to the history tree if `true` and updates state without committing to the history tree if `false`. Therefore, if one wishes to create a state that can be rolled back to in the future, leave this value as `true`. If one wants a normal state update (also saving memory), set this value to `false`.
 
 Utilities is an object that has the following fields:
 
@@ -101,35 +108,47 @@ Redos are only interesting when there are multiple options. These are represente
 
 ## Example
 
-Below is an example of using the useStateHistoryTree hook on a non-text state and applying the defaultKeyDownHandler to a container div (note `tabindex="0"`) to control the background color of another div. Also note that passing a function to `setColor` is also supported, just as in React's useState hook. Use of a ForkedRedoTextField component is also demonstrated.
+Below is an example of using the useStateHistoryTree hook on a non-text state and applying the defaultKeyDownHandler to the window to control the background color of a div. Note that the state updates that do not change the color are not committed to the history tree. Use of a ForkedRedoTextField component is also demonstrated.
 
 ```js
-import React, { useState } from "react";
-import { useStateHistoryTree, ForkedRedoTextField } from "react-state-history-tree";
+import React, {useState, useEffect} from 'react'
+import useStateHistoryTree from "../hooks/useStateHistoryTree"
+import ForkedRedoTextField from "./ForkedRedoTextField"
 
 export default function Test() {
     const [color, setColor, 
-            {
-                undo, 
-                redo, 
-                getCurrentBranches, 
-                getCurrentSubtree, 
-                defaultKeyDownHandler, 
-                atRoot, 
-                atLeaf
-            }
+              {
+                  undo, 
+                  redo, 
+                  getCurrentBranches, 
+                  getCurrentSubtree, 
+                  defaultKeyDownHandler, 
+                  atRoot, 
+                  atLeaf
+              }
         ] = useStateHistoryTree("blue")
+
+    const ColorButton = ({buttonColor}) => 
+        <button onClick={() => setColor(buttonColor, color != buttonColor)}>
+            {buttonColor}
+        </button>
+
+    useEffect(() => {
+        window.addEventListener("keydown", defaultKeyDownHandler)
+        return () => {
+            window.removeEventListener("keydown", defaultKeyDownHandler)
+        }
+    })
+
     return (
-    <>
-        <div onKeyDown={defaultKeyDownHandler} tabindex="0">
+        <>
             <div style={{backgroundColor: color, color: "white"}}>{color}</div>
-            // passing function to setColor also works
-            <button onClick={() => setColor(prevColor => "blue")}>blue</button>
-            <button onClick={() => setColor("red")}>red</button>
-            <button onClick={() => setColor("green")}>green</button>
-        </div>
-        <ForkedRedoTextField multiline></ForkedRedoTextField>
-    </>
+            <ColorButton buttonColor="yellow"></ColorButton>
+            <ColorButton buttonColor="blue"></ColorButton>
+            <ColorButton buttonColor="red"></ColorButton>
+            <ColorButton buttonColor="green"></ColorButton>
+            <ForkedRedoTextField multiline></ForkedRedoTextField>
+        </>
     );
 };
 ```

@@ -13,15 +13,19 @@ export default function useStateHistoryTree(initialState) {
     const [atRoot, setAtRoot] = useState(true)
     const [atLeaf, setAtLeaf] = useState(true)
 
-    function addValue(newValue) {
-        let newNode
-        if (newValue instanceof Function) {
-            newNode = new Node(newValue(value))
+    function addValue(newValue, commit=true) {
+        if (commit) {
+            let newNode
+            if (newValue instanceof Function) {
+                newNode = new Node(newValue(value))
+            } else {
+                newNode = new Node(newValue)
+            }
+            current.addChild(newNode)
+            setCurrent(newNode)
         } else {
-            newNode = new Node(newValue)
+            setValue(newValue)
         }
-        current.addChild(newNode)
-        setCurrent(newNode)
     }
 
     function undo(toClosestFork=false) {
@@ -95,7 +99,6 @@ export default function useStateHistoryTree(initialState) {
     }, [current])
 
     function defaultKeyDownHandler(e) {
-        console.log("in")
         // ctrl + z and ctrl + shift + z
         if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
             e.preventDefault()
