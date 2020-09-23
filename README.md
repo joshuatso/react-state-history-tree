@@ -162,4 +162,4 @@ export default function Test() {
 
 This package is in early development. Thank you for taking the time to read about, use, and make suggestions for this package. All issues and inquiries can be directed to GitHub.
 
-Thank you to [ayc0](https://www.npmjs.com/~ayc0) for the inspiration of providing a paramter to determine when to commit to the history tree. Thank you to [Alexander Zsikla](https://github.com/alexz12948) and [Andrew Zhang](https://github.com/Andrewyzhang) for their suggestions regarding the documentation.
+Thank you to [ayc0](https://www.npmjs.com/~ayc0) for the inspiration of providing a parameter to determine when to commit to the history tree. Thank you to [Alexander Zsikla](https://github.com/alexz12948) and [Andrew Zhang](https://github.com/Andrewyzhang) for their suggestions regarding the documentation.
