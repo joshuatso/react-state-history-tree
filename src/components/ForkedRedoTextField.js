@@ -97,18 +97,12 @@ export default function ForkedRedoTextField({multiline=false, rows=3, inputStyle
     // convert CSSStyleDeclaration to jsx style object
     useEffect(() => {
         if (inputRef.current) {
-            let styles = {...window.getComputedStyle(inputRef.current)}
-            // filter out all indexed properties
-            for (var i=0; i < 316; i++) {
-                delete styles[i]
-            }
+            const styles = {...window.getComputedStyle(inputRef.current)}
+            // filter out all numerically indexed properties
+            const nonNumericalStyleEntries = Object.entries(styles).filter(([key, val]) => isNaN(key))
             // capitalize all properties starting with webkit
-            let webkitStyleEntries = Object.entries(styles).filter(([key, value]) => key.match(/webkit/))
-            for (const [key, value] of webkitStyleEntries) {
-                delete styles[key]
-            }
-            const upperWebkitStyleEntries = webkitStyleEntries.map(([key, value]) => [`W${key.slice(1)}`,value])
-            setCompleteInputStyles({...styles, ...Object.fromEntries(upperWebkitStyleEntries)})
+            const finalStyleEntries = nonNumericalStyleEntries.map(([key, value]) => key.startsWith('webkit') ? [`W${key.slice(1)}`, value] : [key, value])
+            setCompleteInputStyles(Object.fromEntries(finalStyleEntries))
         }
     }, [inputRef, inputStyles])
 
